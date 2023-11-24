@@ -6,20 +6,8 @@ import jakarta.validation.constraints.Size;
 /**
  * DTO for {@link com.last.project4_memerealm.models.User}
  */
-public class RegisterDto {
-	@NotNull
-	@Size(max = 30)
-	private final String username;
-	@NotNull
-	@Size(max = 250)
-	private final String password;
-	@NotNull
-	@Size(max = 250)
-	private final String confirmPassword;
-	@NotNull
-	@Size(max = 100)
-	private final String email;
-
+public record RegisterDto(@NotNull @Size(max = 30) String username, @NotNull @Size(max = 250) String password,
+                          @NotNull @Size(max = 250) String confirmPassword, @NotNull @Size(max = 100) String email) {
 	public RegisterDto(String username, String password, String confirmPassword, String email) {
 		this.username = username;
 		this.password = password;
@@ -27,19 +15,23 @@ public class RegisterDto {
 		this.email = email;
 	}
 
-	public String getUsername() {
+	@Override
+	public String username() {
 		return username;
 	}
 
-	public String getPassword() {
+	@Override
+	public String password() {
 		return password;
 	}
 
-	public String getEmail() {
+	@Override
+	public String email() {
 		return email;
 	}
 
-	public String getConfirmPassword() {
+	@Override
+	public String confirmPassword() {
 		return confirmPassword;
 	}
 }

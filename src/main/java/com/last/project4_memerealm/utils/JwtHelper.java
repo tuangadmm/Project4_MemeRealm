@@ -1,69 +1,93 @@
 package com.last.project4_memerealm.utils;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StringUtils;
+import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+@Component
 public class JwtHelper {
 
-	@Value("${jwt.secret}")
-	private static String secret;
+	private static final String secret = "dolor amet, cursus nec consectetur ipsum Aenean tristique, ante Lorem eu, mollis nunc sit id nunc. lacus elit. tortor Fusce adipiscing";
 
-	@Value("${jwt.expire}")
-	private static long expire;
+	/**
+	 * Generate JWT token with subject is username
+	 * @param subject
+	 * @return token or null if exception occur
+	 */
+	public static String create(String subject){
+		try{
+			Algorithm alg = Algorithm.HMAC512(secret);
 
-//	public String generateJwtToken(Authentication authentication) {
-//
-//		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-//
-//		return Jwts.builder()
-//				.setSubject((userPrincipal.getUsername()))
-//				.setIssuedAt(new Date())
-//				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-//				.signWith(key(), SignatureAlgorithm.HS256)
-//				.compact();
-//	}
-//
-//	private Key key() {
-//		return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
-//	}
-//
-//	public String getUserNameFromJwtToken(String token) {
-//		return Jwts.parserBuilder().setSigningKey(key()).build()
-//				.parseClaimsJws(token).getBody().getSubject();
-//	}
-//
-//	public boolean validateJwtToken(String authToken) {
-//		try {
-//			Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
-//			return true;
-//		} catch (MalformedJwtException e) {
-//			logger.error("Invalid JWT token: {}", e.getMessage());
-//		} catch (ExpiredJwtException e) {
-//			logger.error("JWT token is expired: {}", e.getMessage());
-//		} catch (UnsupportedJwtException e) {
-//			logger.error("JWT token is unsupported: {}", e.getMessage());
-//		} catch (IllegalArgumentException e) {
-//			logger.error("JWT claims string is empty: {}", e.getMessage());
-//		}
-//
-//		return false;
-//	}
-//
-//	public String getUsernameFormHttpRequest(HttpServletRequest request) {
-//		String headerAuth = request.getHeader("Authorization");
-//		if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-//			String token =  headerAuth.substring(7);
-//			return getUserNameFromJwtToken(token);
-//		}
-//		return null;
-//	}
+			Instant now = Instant.now();
+			Instant expirationTime = now.plus(30, ChronoUnit.DAYS);
+			Date expirationDate = Date.from(expirationTime);
 
+			return JWT.create()
+					.withSubject(subject)
+					.withExpiresAt(expirationDate)
+					.sign(alg);
 
+		}catch (JWTCreationException ex){
+			return null;
+		}
+	}
+
+	/**
+	 * Check if token is valid and not expired
+	 * @param token
+	 * @return boolean
+	 */
+	public static boolean verify(String token){
+		DecodedJWT decoded = decodeToken(token);
+		return decoded != null && isExpired(decoded);
+	}
+
+	/**
+	 * Extract username from token
+	 * @param token
+	 * @return username|null
+	 */
+	public static String getUsernameFormToken(String token){
+		DecodedJWT decoded = decodeToken(token);
+		assert decoded != null;
+		return decoded.getSubject();
+	}
+
+	/**
+	 * Decode token to DecodedJWT object
+	 * @param token
+	 * @return DecodedJWT
+	 */
+	private static DecodedJWT decodeToken(String token){
+		try{
+			Algorithm alg = Algorithm.HMAC512(secret);
+
+			JWTVerifier verifier = JWT.require(alg).build();
+
+			return verifier.verify(token);
+		}catch (JWTDecodeException ex){
+			return null;
+		}
+	}
+
+	/**
+	 * Check if token is expired
+	 * @param decodedToken
+	 * @return boolean
+	 */
+	private static boolean isExpired(DecodedJWT decodedToken){
+		Date now    = new Date();
+		Date expire = decodedToken.getExpiresAt();
+
+		return expire != null && expire.before(now);
+	}
 }

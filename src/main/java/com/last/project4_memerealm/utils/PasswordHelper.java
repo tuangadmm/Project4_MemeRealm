@@ -2,7 +2,9 @@ package com.last.project4_memerealm.utils;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PasswordHelper {
 
 	/**

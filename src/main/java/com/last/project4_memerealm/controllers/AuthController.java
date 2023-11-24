@@ -30,6 +30,5 @@ public class AuthController {
 	@PostMapping("login")
 	public ResponseEntity<String> login(@RequestParam("username") String username, @RequestParam("password") String password){
 		return new ResponseEntity<>(as.login(username, password),  HttpStatus.OK);
-
 	}
 }
