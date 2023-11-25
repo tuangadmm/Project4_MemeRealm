@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
@@ -27,7 +29,7 @@ public class AuthController {
 	}
 
 	@PostMapping("login")
-	public ResponseEntity<String> login(@RequestParam("username") String username, @RequestParam("password") String password){
-		return new ResponseEntity<>(as.login(username, password),  HttpStatus.OK);
+	public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest){
+		return new ResponseEntity<>(as.login(loginRequest.get("username"), loginRequest.get("password")),  HttpStatus.OK);
 	}
 }
