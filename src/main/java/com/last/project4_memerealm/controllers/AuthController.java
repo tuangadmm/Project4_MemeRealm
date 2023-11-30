@@ -1,10 +1,10 @@
 package com.last.project4_memerealm.controllers;
 
-import com.last.project4_memerealm.models.dto.RegisterDto;
 import com.last.project4_memerealm.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,12 +24,23 @@ public class AuthController {
 	}
 
 	@PostMapping("register")
-	public ResponseEntity<String> register(@RequestBody RegisterDto obj){
+	public ResponseEntity<String> register(@RequestBody Map<String, String> obj){
 		return new ResponseEntity<>(as.register(obj), HttpStatus.OK);
 	}
 
 	@PostMapping("login")
-	public ResponseEntity<String> login(@RequestBody Map<String, String> loginRequest){
-		return new ResponseEntity<>(as.login(loginRequest.get("username"), loginRequest.get("password")),  HttpStatus.OK);
+	public ResponseEntity<String> login(@RequestBody Map<String, String> obj){
+		return new ResponseEntity<>(as.login(obj),  HttpStatus.OK);
+	}
+
+	@PostMapping("validate-session")
+	public ResponseEntity<Boolean> validateSession(@RequestBody Map<String, String> obj){
+		return new ResponseEntity<>(as.validateSession(obj.get("token")),  HttpStatus.OK);
+	}
+
+	@PostMapping("logout")
+	public ResponseEntity<Void> logout(@RequestBody Map<String, String> obj){
+		as.logout(obj.get("token"));
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

@@ -6,12 +6,12 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtHelper {
@@ -23,7 +23,7 @@ public class JwtHelper {
 	 * @param subject
 	 * @return token or null if exception occur
 	 */
-	public static String create(String subject){
+	public static String create(String subject, List<String> roles, int userId ){
 		try{
 			Algorithm alg = Algorithm.HMAC512(secret);
 
@@ -34,8 +34,9 @@ public class JwtHelper {
 			return JWT.create()
 					.withSubject(subject)
 					.withExpiresAt(expirationDate)
+					.withClaim("roles", roles)
+					.withClaim("userId", userId)
 					.sign(alg);
-
 		}catch (JWTCreationException ex){
 			return null;
 		}
@@ -58,8 +59,16 @@ public class JwtHelper {
 	 */
 	public static String getUsernameFormToken(String token){
 		DecodedJWT decoded = decodeToken(token);
-		assert decoded != null;
-		return decoded.getSubject();
+		if(decoded != null)
+			return decoded.getSubject();
+		return null;
+	}
+
+	public static List<String> getRolesfromToken(String token){
+		DecodedJWT decoded = decodeToken(token);
+		if(decoded != null)
+			return decoded.getClaim("roles").asList(String.class);
+		return null;
 	}
 
 	/**
@@ -70,7 +79,6 @@ public class JwtHelper {
 	private static DecodedJWT decodeToken(String token){
 		try{
 			Algorithm alg = Algorithm.HMAC512(secret);
-
 			JWTVerifier verifier = JWT.require(alg).build();
 
 			return verifier.verify(token);

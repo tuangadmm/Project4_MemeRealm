@@ -3,9 +3,13 @@ package com.last.project4_memerealm.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "sessions")
 public class Session {
@@ -14,6 +18,11 @@ public class Session {
 	@Column(name = "session_id", nullable = false)
 	private Integer id;
 
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+
 	@Size(max = 250)
 	@NotNull
 	@Column(name = "session_token", nullable = false, length = 250)
@@ -21,29 +30,5 @@ public class Session {
 
 	@Column(name = "expire_time")
 	private Instant expireTime;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getSessionToken() {
-		return sessionToken;
-	}
-
-	public void setSessionToken(String sessionToken) {
-		this.sessionToken = sessionToken;
-	}
-
-	public Instant getExpireTime() {
-		return expireTime;
-	}
-
-	public void setExpireTime(Instant expireTime) {
-		this.expireTime = expireTime;
-	}
 
 }

@@ -3,10 +3,14 @@ package com.last.project4_memerealm.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "feedbacks")
 public class Feedback {
 	@Id
@@ -24,37 +28,5 @@ public class Feedback {
 
 	@Column(name = "answered_date")
 	private Instant answeredDate;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
-	public Instant getSentDate() {
-		return sentDate;
-	}
-
-	public void setSentDate(Instant sentDate) {
-		this.sentDate = sentDate;
-	}
-
-	public Instant getAnsweredDate() {
-		return answeredDate;
-	}
-
-	public void setAnsweredDate(Instant answeredDate) {
-		this.answeredDate = answeredDate;
-	}
 
 }

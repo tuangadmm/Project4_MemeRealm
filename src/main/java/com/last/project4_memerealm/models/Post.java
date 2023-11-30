@@ -3,9 +3,15 @@ package com.last.project4_memerealm.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "posts")
 public class Post {
@@ -35,52 +41,13 @@ public class Post {
 	@Column(name = "uploaded_date")
 	private Instant uploadedDate;
 
-	public Integer getId() {
-		return id;
-	}
+	@OneToMany(mappedBy = "post")
+	private Set<Comment> comments = new LinkedHashSet<>();
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+	@OneToMany(mappedBy = "post")
+	private Set<Favourite> favourites = new LinkedHashSet<>();
 
-	public String getCaption() {
-		return caption;
-	}
-
-	public void setCaption(String caption) {
-		this.caption = caption;
-	}
-
-	public String getMediaLink() {
-		return mediaLink;
-	}
-
-	public void setMediaLink(String mediaLink) {
-		this.mediaLink = mediaLink;
-	}
-
-	public Integer getUpVote() {
-		return upVote;
-	}
-
-	public void setUpVote(Integer upVote) {
-		this.upVote = upVote;
-	}
-
-	public Integer getDownVote() {
-		return downVote;
-	}
-
-	public void setDownVote(Integer downVote) {
-		this.downVote = downVote;
-	}
-
-	public Instant getUploadedDate() {
-		return uploadedDate;
-	}
-
-	public void setUploadedDate(Instant uploadedDate) {
-		this.uploadedDate = uploadedDate;
-	}
+	@OneToMany(mappedBy = "post")
+	private Set<RelPostTag> relPostTags = new LinkedHashSet<>();
 
 }

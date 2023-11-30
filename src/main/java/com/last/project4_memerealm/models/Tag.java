@@ -3,7 +3,14 @@ package com.last.project4_memerealm.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+@Getter
+@Setter
 @Entity
 @Table(name = "tags")
 public class Tag {
@@ -17,20 +24,7 @@ public class Tag {
 	@Column(name = "tag_name", nullable = false, length = 100)
 	private String tagName;
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getTagName() {
-		return tagName;
-	}
-
-	public void setTagName(String tagName) {
-		this.tagName = tagName;
-	}
+	@OneToMany(mappedBy = "tag")
+	private Set<RelPostTag> relPostTags = new LinkedHashSet<>();
 
 }
