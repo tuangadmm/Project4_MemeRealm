@@ -8,9 +8,9 @@ import lombok.Setter;
 
 import java.time.Instant;
 
-@Entity
 @Getter
 @Setter
+@Entity
 @Table(name = "comments")
 public class Comment {
 	@Id
@@ -21,6 +21,10 @@ public class Comment {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "post_id")
 	private Post post;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
+	private User user;
 
 	@Size(max = 500)
 	@NotNull

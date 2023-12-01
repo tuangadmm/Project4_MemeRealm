@@ -8,15 +8,23 @@ import lombok.Setter;
 
 import java.time.Instant;
 
-@Entity
 @Getter
 @Setter
+@Entity
 @Table(name = "feedbacks")
 public class Feedback {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "feedback_id", nullable = false)
 	private Integer id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", referencedColumnName = "user_id")
+	private User user;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "assistor_id", referencedColumnName = "user_id")
+	private User assistor;
 
 	@Size(max = 1000)
 	@NotNull

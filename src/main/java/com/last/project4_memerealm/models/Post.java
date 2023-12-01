@@ -20,6 +20,11 @@ public class Post {
 	@Column(name = "post_id", nullable = false)
 	private Integer id;
 
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "user_id", nullable = false, referencedColumnName = "user_id")
+	private User user;
+
 	@Size(max = 200)
 	@NotNull
 	@Column(name = "caption", nullable = false, length = 200)

@@ -65,7 +65,11 @@ public class UserServiceImpl implements UserService {
 		if(!as.hasPermission(token))
 			return false;
 
-		ur.saveAndFlush(obj);
+		User u = ur.findByUsername(obj.getUsername());
+		u.setEmail(obj.getEmail());
+		u.setPassword(obj.getPassword());
+		u.setAvatar(obj.getAvatar());
+		ur.saveAndFlush(u);
 
 		return true;
 	}
