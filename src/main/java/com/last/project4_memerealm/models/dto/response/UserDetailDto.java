@@ -1,6 +1,6 @@
 package com.last.project4_memerealm.models.dto.response;
 
-import com.last.project4_memerealm.models.UserRole;
+import com.last.project4_memerealm.models.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,11 +19,10 @@ public class UserDetailDto {
 	private String      email;
 	private String      avatar;
 
-	private List<UserRole>  roles;
+	List<Role>          roles;
 
-	private Integer     postCount;
-	private Integer     favouriteCount;
-	private Integer     followCount;
-	private Integer     followerCount;
+	private Long        postCount;
+	private Long        favouriteCount;
+	private Long        followCount;
 
 }

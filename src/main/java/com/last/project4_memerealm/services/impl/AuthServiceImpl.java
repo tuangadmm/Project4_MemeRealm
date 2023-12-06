@@ -3,10 +3,11 @@ package com.last.project4_memerealm.services.impl;
 import com.last.project4_memerealm.models.Role;
 import com.last.project4_memerealm.models.Session;
 import com.last.project4_memerealm.models.User;
-import com.last.project4_memerealm.models.UserRole;
+import com.last.project4_memerealm.models.dto.request.NewUserDto;
+import com.last.project4_memerealm.models.dto.response.LoginResponseDto;
+import com.last.project4_memerealm.repositories.RoleRepository;
 import com.last.project4_memerealm.repositories.SessionRepository;
 import com.last.project4_memerealm.repositories.UserRepository;
-import com.last.project4_memerealm.repositories.UserRoleRepository;
 import com.last.project4_memerealm.services.AuthService;
 import com.last.project4_memerealm.utils.JwtHelper;
 import com.last.project4_memerealm.utils.PasswordHelper;
@@ -25,38 +26,43 @@ public class AuthServiceImpl implements AuthService {
 
 	private final UserRepository ur;
 	private final SessionRepository sr;
-	private final UserRoleRepository urr;
+	private final RoleRepository rr;
 
 
 	@Autowired
-	public AuthServiceImpl(UserRepository ur, SessionRepository sr, UserRoleRepository urr) {
+	public AuthServiceImpl(UserRepository ur, SessionRepository sr, RoleRepository rr) {
 		this.ur = ur;
 		this.sr = sr;
-		this.urr = urr;
+		this.rr = rr;
 	}
 
 	@Override
-	public String login(Map<String, String> obj) {
+	public LoginResponseDto login(Map<String, String> obj) {
 		String username = obj.get("username");
 		String password = obj.get("password");
+
 		List<String> roles = new ArrayList<>();
+		LoginResponseDto res = new LoginResponseDto();
 
 		User u = ur.findByUsername(username);
 
 		if(u == null) {
-			return "Username not found";
+			res.setMessage("Username not found");
+			return res;
 		}else{
-			if(!PasswordHelper.verifyPassword(password, u.getPassword()))
-				return "Password is incorrect";
+			if(!PasswordHelper.verifyPassword(password, u.getPassword())) {
+				res.setMessage("Password is incorrect");
+				return res;
+			}
 		}
 
 		//get user roles
-		List<UserRole> rs = urr.findByUser_Id(u.getId());
+		List<Role> rs = rr.findByUserRoles_User_Id(u.getId());
 
 		//add to claim
-		for(UserRole r : rs){
+		for(Role r : rs){
 			roles.add(
-				r.getRole().getRoleName()
+				r.getRoleName()
 			);
 		}
 
@@ -73,15 +79,21 @@ public class AuthServiceImpl implements AuthService {
 
 		sr.saveAndFlush(s);
 
-		return token;
+		//update response
+		res.setToken(token);
+		res.setRoles(roles);
+		res.setMessage("Success");
+
+		return res;
 	}
 
 	@Override
-	public String register(Map<String, String> obj) {
-		String username         = obj.get("username");
-		String password         = obj.get("password");
-		String confirmPassword  = obj.get("confirmPassword");
-		String email            = obj.get("email");
+	public String register(NewUserDto obj) {
+		String username         = obj.getUsername();
+		String password         = obj.getPassword();
+		String confirmPassword  = obj.getConfirmPassword();
+		String email            = obj.getEmail();
+
 
 		if(ur.findByUsername(username) != null){
 			return "Username is already taken";
@@ -117,21 +129,29 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public boolean hasPermission(String token) {
+	public boolean hasPermission(String token, List<String> roles) {
+		boolean grant = false;
+
+		//validate token
 		String username = JwtHelper.getUsernameFormToken(token);
 		if(username == null)
 			return false;
 
+		//validate user
 		User u = ur.findByUsername(username);
 		if(u == null)
 			return false;
 
-		List<UserRole> rolesOnDb    = urr.findByUser_Id(u.getId());
+		//get user's roles
+		List<Role> rolesOnDb    = rr.findByUserRoles_User_Id(u.getId());
 
-		for(UserRole ur : rolesOnDb){
-			if(Objects.equals(ur.getRole().getRoleName(), "admin"))
-				return true;
+		//check if role matched database
+		for(Role r : rolesOnDb){
+			if(roles.contains(r.getRoleName())) {
+				grant = true;
+				break;
+			}
 		}
-		return false;
+		return grant;
 	}
 }

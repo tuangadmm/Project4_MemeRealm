@@ -1,11 +1,17 @@
 package com.last.project4_memerealm.controllers;
 
+import com.last.project4_memerealm.models.dto.request.NewUserDto;
+import com.last.project4_memerealm.models.dto.response.LoginResponseDto;
 import com.last.project4_memerealm.services.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 
@@ -22,12 +28,21 @@ public class AuthController {
 	}
 
 	@PostMapping("register")
-	public ResponseEntity<String> register(@RequestBody Map<String, String> obj){
+	public ResponseEntity<?> register(@Valid @RequestBody NewUserDto obj, BindingResult bindingResult){
+		if (bindingResult.hasErrors()) {
+
+			ArrayList<String> errors = new ArrayList<>();
+			for (FieldError error : bindingResult.getFieldErrors()) {
+				errors.add(error.getDefaultMessage());
+			}
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+		}
+
 		return new ResponseEntity<>(as.register(obj), HttpStatus.OK);
 	}
 
 	@PostMapping("login")
-	public ResponseEntity<String> login(@RequestBody Map<String, String> obj){
+	public ResponseEntity<LoginResponseDto> login(@RequestBody Map<String, String> obj){
 		return new ResponseEntity<>(as.login(obj),  HttpStatus.OK);
 	}
 
