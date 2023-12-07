@@ -1,14 +1,14 @@
 package com.last.project4_memerealm.services;
 
 import com.last.project4_memerealm.models.dto.request.NewUserDto;
-import com.last.project4_memerealm.models.dto.response.LoginResponseDto;
+import com.last.project4_memerealm.models.dto.response.AuthResponse;
 
 import java.util.List;
 import java.util.Map;
 
 public interface AuthService {
 
-	LoginResponseDto login(Map<String, String> obj);
+	AuthResponse login(Map<String, String> obj);
 
 	String register(NewUserDto obj);
 

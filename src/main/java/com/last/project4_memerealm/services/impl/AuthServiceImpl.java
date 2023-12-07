@@ -4,7 +4,7 @@ import com.last.project4_memerealm.models.Role;
 import com.last.project4_memerealm.models.Session;
 import com.last.project4_memerealm.models.User;
 import com.last.project4_memerealm.models.dto.request.NewUserDto;
-import com.last.project4_memerealm.models.dto.response.LoginResponseDto;
+import com.last.project4_memerealm.models.dto.response.AuthResponse;
 import com.last.project4_memerealm.repositories.RoleRepository;
 import com.last.project4_memerealm.repositories.SessionRepository;
 import com.last.project4_memerealm.repositories.UserRepository;
@@ -37,12 +37,12 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public LoginResponseDto login(Map<String, String> obj) {
+	public AuthResponse login(Map<String, String> obj) {
 		String username = obj.get("username");
 		String password = obj.get("password");
 
 		List<String> roles = new ArrayList<>();
-		LoginResponseDto res = new LoginResponseDto();
+		AuthResponse res = new AuthResponse();
 
 		User u = ur.findByUsername(username);
 

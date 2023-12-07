@@ -1,7 +1,7 @@
 package com.last.project4_memerealm.controllers;
 
 import com.last.project4_memerealm.models.dto.request.NewUserDto;
-import com.last.project4_memerealm.models.dto.response.LoginResponseDto;
+import com.last.project4_memerealm.models.dto.response.AuthResponse;
 import com.last.project4_memerealm.services.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class AuthController {
 	}
 
 	@PostMapping("login")
-	public ResponseEntity<LoginResponseDto> login(@RequestBody Map<String, String> obj){
+	public ResponseEntity<AuthResponse> login(@RequestBody Map<String, String> obj){
 		return new ResponseEntity<>(as.login(obj),  HttpStatus.OK);
 	}
 

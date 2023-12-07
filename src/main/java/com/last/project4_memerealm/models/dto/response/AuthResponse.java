@@ -5,7 +5,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Setter
-public class LoginResponseDto {
+public class AuthResponse {
 	private String          message;
 	private String          token;
 	private List<String>    roles;
